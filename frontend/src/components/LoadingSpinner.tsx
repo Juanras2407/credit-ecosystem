@@ -1,6 +1,7 @@
 interface Props {
   size?: 'sm' | 'md' | 'lg';
   label?: string;
+  className?: string;
 }
 
 const sizes = {
@@ -9,11 +10,11 @@ const sizes = {
   lg: 'h-12 w-12',
 };
 
-export function LoadingSpinner({ size = 'md', label = 'Cargando...' }: Props) {
+export function LoadingSpinner({ size = 'md', label = 'Cargando...', className = 'text-primary-600' }: Props) {
   return (
     <div role="status" className="flex flex-col items-center gap-3">
       <svg
-        className={`${sizes[size]} animate-spin text-primary-600`}
+        className={`${sizes[size]} animate-spin ${className}`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

@@ -158,7 +158,7 @@ export function EvaluationForm({ onEvaluationComplete }: Props) {
         <button type="submit" disabled={loading} className="btn-primary mt-6">
           {loading ? (
             <span className="flex items-center justify-center gap-3">
-              <LoadingSpinner size="sm" label="Evaluando..." />
+              <LoadingSpinner size="sm" label="Evaluando..." className="text-white" />
               <span>Consultando Buró de Crédito...</span>
             </span>
           ) : (
