@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_package = "com.credito.riesgo.grpc";
+option java_multiple_files = true;
+
+package riesgo;
+
+service RiskService {
+  rpc GetScore (ScoreRequest) returns (ScoreResponse);
+  rpc GetDebts (DebtsRequest) returns (DebtsResponse);
+}
+
+message ScoreRequest {
+  string cedula = 1;
+}
+
+message ScoreResponse {
+  int32 score = 1;
+}
+
+message DebtsRequest {
+  string cedula = 1;
+}
+
+message Debt {
+  string description = 1;
+  double amount = 2;
+  double monthly_payment = 3;
+}
+
+message DebtsResponse {
+  repeated Debt debts = 1;
+  double total_monthly_payment = 2;
+}

@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: credito-db
+    environment:
+      POSTGRES_DB: creditodb
+      POSTGRES_USER: credito
+      POSTGRES_PASSWORD: credito123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U credito -d creditodb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  microservice-b:
+    build:
+      context: ./microservice-b
+      dockerfile: Dockerfile
+    container_name: credito-riesgo
+    ports:
+      - "9000:9000"
+      - "8081:8081"
+    environment:
+      QUARKUS_HTTP_PORT: 8081
+
+  microservice-a:
+    build:
+      context: ./microservice-a
+      dockerfile: Dockerfile
+    container_name: credito-evaluacion
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: creditodb
+      DB_USER: credito
+      DB_PASSWORD: credito123
+      RISK_SERVICE_HOST: microservice-b
+      RISK_SERVICE_PORT: 9000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      microservice-b:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
+    container_name: credito-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - microservice-a
+
+volumes:
+  postgres_data:
